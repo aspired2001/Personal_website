@@ -1,10 +1,34 @@
-import React from "react";
+// frontend/src/components/Contact.js
+import React, { useState } from "react";
 import PageHeaderContent from "../../components/pageHeaderContent";
 import { BsInfoCircleFill } from "react-icons/bs";
 import { Animate } from "react-simple-animate";
+import axios from "axios";
 import "./styles.scss";
 
 const Contact = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    description: "",
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("Form data submitted:", formData);
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/contact", formData);
+      console.log("Server response:", response.data); // Handle success or redirect as needed
+    } catch (error) {
+      console.error("Error submitting form:", error); // Handle error
+    }
+  };
+
   return (
     <section id="contact" className="contact">
       <PageHeaderContent
@@ -44,6 +68,8 @@ const Contact = () => {
                   name="name"
                   className="inputName"
                   type={"text"}
+                  value={formData.name}
+                  onChange={handleChange}
                 />
                 <label htmlFor="name" className="nameLabel">
                   Name
@@ -55,6 +81,8 @@ const Contact = () => {
                   name="email"
                   className="inputEmail"
                   type={"text"}
+                  value={formData.email}
+                  onChange={handleChange}
                 />
                 <label htmlFor="email" className="emailLabel">
                   Email
@@ -67,17 +95,20 @@ const Contact = () => {
                   className="inputDescription"
                   type={"text"}
                   rows="5"
+                  value={formData.description}
+                  onChange={handleChange}
                 />
                 <label htmlFor="description" className="descriptionLabel">
                   Description
                 </label>
               </div>
             </div>
-            <button>Submit</button>
+            <button onClick={handleSubmit}>Submit</button>
           </div>
         </Animate>
       </div>
     </section>
   );
 };
+
 export default Contact;

@@ -1,42 +1,40 @@
-import React from "react";
+import React, { useState } from "react";
 import PageHeaderContent from "../../components/pageHeaderContent";
 import { BsInfoCircleFill } from "react-icons/bs";
+import "./styles.scss";
 import ImageOne from "../../images/image1.jpg";
 import ImageTwo from "../../images/image2.jpg";
 import ImageThree from "../../images/image3.jpg";
 import ImageFour from "../../images/image4.jpg";
 import ImageFive from "../../images/image5.jpg";
-import "./styles.scss";
-import { useState } from "react";
 
 const portfolioData = [
   {
-    id: 2,
-    name: "Ecommerce",
+    id: 1,
+    name: "Portfolio",
     image: ImageOne,
-    link: "",
+    link: "https://my-portfolio-react-liart-delta.vercel.app/",
   },
   {
-    id: 3,
+    id: 2,
     name: "Notes App",
     link: "",
     image: ImageTwo,
   },
   {
-    id: 2,
+    id: 3,
     name: "Supplier Design",
     image: ImageThree,
     link: "",
   },
   {
-    id: 2,
+    id: 4,
     name: "Todo App",
     image: ImageFour,
-
-    link: "",
+    link: "https://to-do-typescript-six.vercel.app/",
   },
   {
-    id: 3,
+    id: 5,
     name: "Shopping cart design",
     image: ImageFive,
     link: "",
@@ -50,7 +48,7 @@ const filterData = [
   },
   {
     filterId: 2,
-    label: "Developement",
+    label: "Development",
   },
   {
     filterId: 3,
@@ -59,27 +57,18 @@ const filterData = [
 ];
 
 const Portfolio = () => {
-  const [filteredvalue, setFilteredValue] = useState(1);
+  const [filteredValue, setFilteredValue] = useState(1);
   const [hoveredValue, setHoveredValue] = useState(null);
+  const [selectedLink, setSelectedLink] = useState(null);
 
-  function handleFilter(currentId) {
+  function handleFilter(currentId, link) {
     setFilteredValue(currentId);
+    setSelectedLink(link);
   }
 
   function handleHover(index) {
     setHoveredValue(index);
   }
-
-  console.log("====================================");
-  console.log(hoveredValue);
-  console.log("====================================");
-
-  const filteredItems =
-    filteredvalue === 1
-      ? portfolioData
-      : portfolioData.filter((item) => item.id === filteredvalue);
-
-  console.log(filteredItems);
 
   return (
     <section id="portfolio" className="portfolio">
@@ -91,7 +80,7 @@ const Portfolio = () => {
         <ul className="portfolio__content__filter">
           {filterData.map((item) => (
             <li
-              className={item.filterId === filteredvalue ? "active" : ""}
+              className={item.filterId === filteredValue ? "active" : ""}
               onClick={() => handleFilter(item.filterId)}
               key={item.filterId}
             >
@@ -100,31 +89,39 @@ const Portfolio = () => {
           ))}
         </ul>
         <div className="portfolio__content__cards">
-          {filteredItems.map((item, index) => (
-            <div
-              className="portfolio__content__cards__item"
-              key={`cardItem${item.name.trim()}`}
-              onMouseEnter={() => handleHover(index)}
-              onMouseLeave={() => handleHover(null)}
-            >
-              <div className="portfolio__content__cards__item__img-wrapper">
-                <a>
-                  <img alt="dummy data" src={item.image} />
-                </a>
+          {portfolioData
+            .filter((item) => filteredValue === 1 || item.id === filteredValue)
+            .map((item, index) => (
+              <div
+                className="portfolio__content__cards__item"
+                key={`cardItem${item.name.trim()}`}
+                onMouseEnter={() => handleHover(index)}
+                onMouseLeave={() => handleHover(null)}
+                onClick={() => {
+                  if (item.link) {
+                    window.open(item.link, "_blank");
+                  }
+                }}
+              >
+                <div className="portfolio__content__cards__item__img-wrapper">
+                  <a>
+                    <img alt="dummy data" src={item.image} />
+                  </a>
+                </div>
+                <div className="overlay">
+                  {index === hoveredValue && (
+                    <div>
+                      <p>{item.name}</p>
+                      {item.link && <button>Visit</button>}
+                    </div>
+                  )}
+                </div>
               </div>
-              <div className="overlay">
-                {index === hoveredValue && (
-                  <div>
-                    <p>{item.name}</p>
-                    <button>Visit</button>
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
     </section>
   );
 };
+
 export default Portfolio;
